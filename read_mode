@@ -1,0 +1,29 @@
+#!/bin/bash
+ip=$1
+bmc_ip=$2
+ping -c 1 -W 5 $1 >/dev/null 2>&1
+if [ $? != 0 ];then
+
+echo "sp_ip is not accessable!" 
+ 
+ping -c 1 -W 5 $2 >/dev/null 2>&1
+if [ $? == 0 ];then 
+
+echo "sp_bmc_ip is accessable" && exit 1
+
+else 
+
+echo " sp_bmc_ip is also not accessable" && exit 1
+
+fi  
+
+else
+
+echo "System_ip is accessable!"
+fi
+
+#nohup ./ex $ip 
+
+#cat mode_txt
+
+exit

@@ -1,0 +1,61 @@
+#!/bin/bash
+function check_ping()
+{
+        ip=$1
+        ping -c 1 -W 2 $ip >/dev/null 2>&1
+        if [ $? -ne 0 ];then
+                echo -e "\e[33;40;1m$ip can not access.\e[0m"
+                exit 1
+        fi
+}
+
+function check_nnumber()
+{
+
+ ip=$1
+       # ip_vm=$(ifconfig -a | grep inet | grep -v 127.0.0.1 | grep -v inet6 | sed 's/^.*addr://g' | sed 's/  Bcast.*//g')
+ password=c4proto!
+
+ /usr/bin/expect <<-_EOF_
+                set timeout 5
+                spawn ssh root@$ip
+                        expect {
+                                "(yes/no" {
+                                        send "yes\r";exp_continue
+                                        expect "Password:"
+                                        send "$password\r"
+                                 }
+                                "Password:" { send "$password\r" }
+                                "~>"
+                        }
+                        send "speclcli -getPsStatus | awk '/'$SP' PS0 Status/,/^$/' |grep Firmware|awk '{print $NF}'|tr -d '.'\r"
+                        send "ipmitool fru list 5 |grep 'Board Part Number'\r"
+                        send "sptool -r ps0 | grep 'Serial Number'\r" 
+                         send "exit\r"
+                expect eof
+_EOF_
+        return 0
+}
+check_ping $1
+check_nnumber $1
+
+exit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

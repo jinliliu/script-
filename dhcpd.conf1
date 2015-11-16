@@ -1,0 +1,567 @@
+ddns-update-style none;
+
+option domain-name "usd.lab.emc.com";
+option domain-name-servers 10.254.174.10;
+
+default-lease-time 600;
+max-lease-time 7200;
+
+log-facility local7;
+
+allow booting;
+allow bootp;
+
+
+
+subnet 10.62.34.0 netmask 255.255.255.0{
+host ob-s2004-spa {
+    hardware ethernet 00:60:16:6f:9e:c6;
+    fixed-address 10.62.34.180;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2004-spa";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+
+host ob-s2004-spb {
+    hardware ethernet 00:60:16:6f:9e:c2;
+    fixed-address 10.62.34.181;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2004-spb";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+}
+subnet 10.62.34.0 netmask 255.255.255.0{
+host ob-s2006-spa {
+    hardware ethernet 00:60:16:6f:9e:8a;
+    fixed-address 10.62.34.244;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2006-spa";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+
+host ob-s2006-spb {
+    hardware ethernet 00:60:16:6f:9e:6a;
+    fixed-address 10.62.34.245;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2006-spb";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+}
+subnet 10.62.34.0 netmask 255.255.255.0{
+host ob-s2008-spa {
+    hardware ethernet 00:60:16:6f:b2:7a;
+    fixed-address 10.62.34.165;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2008-spa";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+
+host ob-s2008-spb {
+    hardware ethernet 00:60:16:6f:b2:82;
+    fixed-address 10.62.34.166;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2008-spb";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+}
+subnet 10.62.34.0 netmask 255.255.255.0{
+host ob-s2009-spa {
+    hardware ethernet 00:60:16:6f:ad:c6;
+    fixed-address 10.62.34.5;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2009-spa";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+
+host ob-s2009-spb {
+    hardware ethernet 00:60:16:6f:ab:f2;
+    fixed-address 10.62.34.6;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2009-spb";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+}
+subnet 10.62.34.0 netmask 255.255.255.0{
+host ob-s2010-spa {
+    hardware ethernet 00:60:16:6f:b1:32;
+    fixed-address 10.62.34.185;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2010-spa";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+
+host ob-s2010-spb {
+    hardware ethernet 00:60:16:6f:b3:26;
+    fixed-address 10.62.34.186;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2010-spb";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+}
+subnet 10.62.34.0 netmask 255.255.255.0{
+host ob-s2011-spa {
+    hardware ethernet 00:60:16:6f:b0:da;
+    fixed-address 10.62.34.94;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2011-spa";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+
+host ob-s2011-spb {
+    hardware ethernet 00:60:16:6f:b3:1a;
+    fixed-address 10.62.34.95;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2011-spb";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+}
+subnet 10.62.34.0 netmask 255.255.255.0{
+host ob-s2012-spa {
+    hardware ethernet 00:60:16:6f:b0:ce;
+    fixed-address 10.62.34.190;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2012-spa";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+
+host ob-s2012-spb {
+    hardware ethernet 00:60:16:6f:b3:5e;
+    fixed-address 10.62.34.191;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2012-spb";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+}
+subnet 10.62.34.0 netmask 255.255.255.0{
+host ob-s2013-spa {
+    hardware ethernet 00:60:16:6f:b3:46;
+    fixed-address 10.62.34.205;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2013-spa";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+
+host ob-s2013-spb {
+    hardware ethernet 00:60:16:6f:b3:22;
+    fixed-address 10.62.34.206;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2013-spb";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+}
+subnet 10.62.34.0 netmask 255.255.255.0{
+host ob-s2005-spa {
+    hardware ethernet 00:60:16:6f:9e:ca;
+    fixed-address 10.62.34.140;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2005-spa";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+
+host ob-s2005-spb {
+    hardware ethernet 00:60:16:6f:9e:be;
+    fixed-address 10.62.34.141;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2005-spb";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+}
+subnet 10.62.34.0 netmask 255.255.255.0{
+host ob-s2007-spa {
+    hardware ethernet 00:60:16:6f:9e:24;
+    fixed-address 10.62.34.249;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2007-spa";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+
+host ob-s2007-spb {
+    hardware ethernet 00:60:16:6f:9e:e6;
+    fixed-address 10.62.34.250;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "ob-s2007-spb";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bc-z1009-spa {
+    hardware ethernet 00:60:16:58:e0:8c;
+    fixed-address 10.62.54.101;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bc-z1009-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bc-z1009-spb {
+    hardware ethernet 00:60:16:58:e0:90;
+    fixed-address 10.62.54.102;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bc-z1009-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bc-z1000-spa {
+    hardware ethernet 00:60:16:58:e0:94;
+    fixed-address 10.62.54.86;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bc-z1000-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bc-z1000-spb {
+    hardware ethernet 00:60:16:58:e0:98;
+    fixed-address 10.62.54.87;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bc-z1000-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bearcat-00-spa {
+    hardware ethernet 00:60:16:75:e3:ac;
+    fixed-address 10.62.54.93;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-00-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bearcat-00-spb {
+    hardware ethernet 00:60:16:6f:00:14;
+    fixed-address 10.62.54.94;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-00-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bearcat-01-spa {
+    hardware ethernet 00:60:16:75:5e:f8;
+    fixed-address 10.62.54.172;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-01-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bearcat-01-spb {
+    hardware ethernet 00:60:16:75:5f:20;
+    fixed-address 10.62.54.173;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-01-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bearcat-02-spa {
+    hardware ethernet 00:60:16:75:e2:f4;
+    fixed-address 10.62.54.97;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-02-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bearcat-02-spb {
+    hardware ethernet 00:60:16:75:e3:70;
+    fixed-address 10.62.54.98;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-02-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bearcat-03-spa {
+    hardware ethernet 00:60:16:75:5f:10;
+    fixed-address 10.62.54.176;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-03-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bearcat-03-spb {
+    hardware ethernet 00:60:16:75:5f:38;
+    fixed-address 10.62.54.177;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-03-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bearcat-04-spa {
+    hardware ethernet 00:60:16:75:e3:3c;
+    fixed-address 10.62.54.141;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-04-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bearcat-04-spb {
+    hardware ethernet 00:60:16:6f:00:4c;
+    fixed-address 10.62.54.142;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-04-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bearcat-05-spa {
+    hardware ethernet 00:60:16:75:5e:d4;
+    fixed-address 10.62.54.136;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-05-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bearcat-05-spb {
+    hardware ethernet 00:60:16:75:5f:a4;
+    fixed-address 10.62.54.137;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-05-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bearcat-06-spa {
+    hardware ethernet 00:60:16:75:e7:38;
+    fixed-address 10.62.54.107;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-06-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bearcat-06-spb {
+    hardware ethernet 00:60:16:75:e6:ac;
+    fixed-address 10.62.54.108;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-06-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bearcat-07-spa {
+    hardware ethernet 00:60:16:75:e3:80;
+    fixed-address 10.62.54.145;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-07-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bearcat-07-spb {
+    hardware ethernet 00:60:16:75:e3:6c;
+    fixed-address 10.62.54.146;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-07-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bearcat-08-spa {
+    hardware ethernet 00:60:16:6f:95:b4;
+    fixed-address 10.62.54.121;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-08-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bearcat-08-spb {
+    hardware ethernet 00:60:16:6f:00:7c;
+    fixed-address 10.62.54.122;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-08-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bearcat-09-spa {
+    hardware ethernet 00:60:16:6f:00:64;
+    fixed-address 10.62.54.125;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-09-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bearcat-09-spb {
+    hardware ethernet 00:60:16:6f:00:10;
+    fixed-address 10.62.54.126;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-09-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bearcat-10-spa {
+    hardware ethernet 00:60:16:75:5f:44;
+    fixed-address 10.62.54.129;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-10-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bearcat-10-spb {
+    hardware ethernet 00:60:16:75:e2:d8;
+    fixed-address 10.62.54.130;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-10-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+subnet 10.62.54.0 netmask 255.255.255.0{
+host bearcat-11-spa {
+    hardware ethernet 00:60:16:6f:00:40;
+    fixed-address 10.62.54.117;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-11-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host bearcat-11-spb {
+    hardware ethernet 00:60:16:6f:00:a0;
+    fixed-address 10.62.54.118;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "bearcat-11-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}

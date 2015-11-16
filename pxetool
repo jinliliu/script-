@@ -1,0 +1,132 @@
+#!/bin/bash
+
+function usage()
+{
+echo "the correct form: pxetool parameter1 parameter2"
+exit
+}
+
+[ $# != 2 ] && usage
+
+id=$1
+id="$(echo $id|sed "s/^[ \t]*//g"|sed "s/[ \t]*$//g"|tr "[:lower:]" "[:upper:]")"
+
+sqlite3 > devices.csv << _EOF_
+.open /home/guokun/workspace/webui/labsmith/db.sqlite3 ;
+select * from device_management_device ;
+.exit
+_EOF_
+
+cp /root/PXE/dhcpd.conf /etc/dhcpd.conf
+
+line="$(cat devices.csv|grep "$id")"
+echo "$line"
+[ -z "$line" ] && echo "[ERROR] No $id 's information in DataBase." && exit 1
+
+spa_ip=`echo $line | awk -F "|" '{ printf("%s", $5)}'`
+spb_ip=`echo $line | awk -F "|" '{ printf("%s", $6)}'`
+spa_mac=`echo $line | awk -F "|" '{ printf("%s", $7)}'`
+spb_mac=`echo $line | awk -F "|" '{ printf("%s", $8)}'`
+spa_bmc_ip=`echo $line | awk -F "|" '{ printf("%s", $15)}'`
+spb_bmc_ip=`echo $line | awk -F "|" '{ printf("%s", $16)}'`
+spa_mac="$(echo $spa_mac|tr "[:upper:]" "[:lower:]")"
+spb_mac="$(echo $spb_mac|tr "[:upper:]" "[:lower:]")"
+
+
+if [[ -z "$spa_ip" || -z "$spa_mac" || -z "$spb_ip" || -z "$spb_mac" ]]; then
+	echo "[ERROR] Ip or Mac is empty in DataBase!" && exit 1
+fi
+
+echo "[LOG] DHCP Configuration is completed!"
+
+spa_mac_trans="$(echo $spa_mac|sed "s/:/-/g")"
+spb_mac_trans="$(echo $spb_mac|sed "s/:/-/g")"
+
+if [[ "$id" =~ ^OB ]] ; then
+	platform=OBERON
+	mem=2048M
+fi
+if [[ "$id" =~ ^BC ]] ; then
+	platform=BEACHCOMBER
+	mem=2048M
+fi
+if [[ "$id" =~ ^BE ]] ; then
+    platform=BEARCAT
+    mem=2048M
+fi
+
+cat > /srv/tftpboot/pxelinux.cfg/01-$spa_mac_trans << _EOF_
+serial 0 115200
+console 0
+default menu.c32
+menu title PXE SERVER
+prompt 1
+
+timeout 200
+
+label PXE
+    menu default
+    menu label $id 
+    kernel linux/$id/vmlinuz
+    append initrd=linux/$id/initrd text splash=silent crashkernel=64M@32M showopts loglevel=1 panic=1 nopat pci=norom,hpmemsize=0M,hpiosize=0 ramdisk_size=61440 disable_panic_on_stuck_irq nopat console=ttyS0,115200 memmap=128M\$1024M neo.pramfs=128M\$1024M mem=$mem nmi_watchdog=1 mcdelay=1000 emc_nmi_panic=1 reboot=a iommu=soft neo.ignore_post_errors=1 maxcpus=6 neo.disablefw=1 platform=$platform neo.reinit=2 neo.path=http://10.62.34.99/pxe/$id/OS.tgz.bin neo.invalidateir=1
+_EOF_
+	
+
+cat > /srv/tftpboot/pxelinux.cfg/01-$spb_mac_trans << _EOF_
+serial 0 115200
+console 0
+default menu.c32
+menu title PXE SERVER
+prompt 1
+
+timeout 200
+
+label PXE
+    menu default
+    menu label $id
+    kernel linux/$id/vmlinuz
+    append initrd=linux/$id/initrd text splash=silent crashkernel=64M@32M showopts loglevel=1 panic=1 nopat pci=norom,hpmemsize=0M,hpiosize=0 ramdisk_size=61440 disable_panic_on_stuck_irq nopat console=ttyS0,115200 memmap=128M\$1024M neo.pramfs=128M\$1024M mem=$mem nmi_watchdog=1 mcdelay=1000 emc_nmi_panic=1 reboot=a iommu=soft neo.ignore_post_errors=1 maxcpus=6 neo.disablefw=1 platform=$platform neo.reinit=2 neo.path=http://10.62.34.99/pxe/$id/OS.tgz.bin neo.invalidateir=1
+_EOF_
+
+echo "[LOG] PXE Configuration is completed!"
+
+OSfile=$2
+[ ! -e "$OSfile" ] && echo "[ERROR] OS file doesn't exist!" && exit 1
+
+[ -d "/srv/www/htdocs/$id" ] && rm -r "/srv/www/htdocs/$id"
+mkdir -p "/srv/www/htdocs/$id" && cd "/srv/www/htdocs/$id"
+
+cp "$OSfile" "/srv/www/htdocs/$id/OS.tgz.bin" && echo "[LOG] Original OS image file has been copied."
+chmod 755 OS.tgz.bin
+./OS.tgz.bin --binblob > "OS.tgz.bin&binblob" && echo "[LOG] OS binblob file has been built."
+touch "OS.tgz.bin&config" && echo "[LOG] OS config file has been built."
+touch "OS.tgz.bin&customize" && echo "[LOG] OS customize file has been built."
+mv OS.tgz.bin "OS.tgz.bin&image" && echo "[LOG] OS image file has been built."
+
+echo "[LOG] TFTP bootflash files' bulid start......"
+./"OS.tgz.bin&image" --unwrap | tar -xz -O ./flash/bootflash.img >bootflash.img && echo "[LOG] bootflash.img has been unwarpped."
+mkdir -p flash_mnt && mount -o loop bootflash.img flash_mnt/
+
+[ -d "/srv/tftpboot/linux/$id" ] && rm -r "/srv/tftpboot/linux/$id"
+mkdir -p "/srv/tftpboot/linux/$id" 
+
+cp flash_mnt/vmlinuz*.NEO flash_mnt/init* "/srv/tftpboot/linux/$id/" && echo "[LOG] bootflash files have been built."
+umount flash_mnt && rm -d flash_mnt 
+rm bootflash.img
+cd "/srv/tftpboot/linux/$id"
+ln -s vmlinuz*.NEO vmlinuz
+ln -s init* initrd
+
+service dhcpd restart
+
+echo "<br>[LOG] TFTP bootflash files' build ends successfully!"
+echo "<br>------------------------PXE SERVER CONFIGURATION DONE!-------------------------"
+echo "<br>Reboot dual..."
+ipmitool -I lanplus -H $spa_bmc_ip -U admin -P Password1 chassis bootdev pxe && echo "<br>[LOG] set spa boot from pxe"
+ipmitool -I lanplus -H $spb_bmc_ip -U admin -P Password1 chassis bootdev pxe && echo "<br>[LOG] set spb boot from pxe"
+ipmitool -I lanplus -H $spa_bmc_ip -U admin -P Password1 chassis power reset && echo "<br>[LOG] reboot spa"
+ipmitool -I lanplus -H $spb_bmc_ip -U admin -P Password1 chassis power reset && echo "<br>[LOG] reboot spb"
+echo "<br>-------------------------------------------------------------------------------"
+echo "<br>PXE BOOT START!"
+
+exit

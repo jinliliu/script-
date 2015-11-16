@@ -1,0 +1,84 @@
+#!/bin/bash
+
+#write:jinli
+#date:2015.05.10
+#funtion:create the dhcp configure
+sqlite3 > devices.csv << _EOF_
+.open /home/guokun/workspace/webui/labsmith/db.sqlite3 ;
+select * from device_management_device ;
+.exit
+_EOF_
+
+data=devices.csv
+cp dhcpd.conf_ori  /root/work_pxe_test/dhcpd.conf
+while read line 
+do
+    id=`echo $line | awk -F "|" '{ printf("%s", $2)}'`
+    id="$(echo $id|sed "s/^[ \t]*//g"|sed "s/[ \t]*$//g"|tr "[:upper:]" "[:lower:]")"
+
+    spa_ip=`echo $line | awk -F "|" '{ printf("%s", $5)}'`
+    spb_ip=`echo $line | awk -F "|" '{ printf("%s", $6)}'`
+    spa_mac=`echo $line | awk -F "|" '{ printf("%s", $7)}'`
+    spb_mac=`echo $line | awk -F "|" '{ printf("%s", $8)}'`
+
+    spa_mac="$(echo $spa_mac|tr "[:upper:]" "[:lower:]")"
+    spb_mac="$(echo $spb_mac|tr "[:upper:]" "[:lower:]")"
+
+if [[  "$id" =~ ^ob  ]]; then
+    cat >> /root/work_pxe_test/dhcpd.conf <<- _EOF_
+subnet 10.62.34.0 netmask 255.255.255.0{
+host ${id}-spa {
+    hardware ethernet $spa_mac;
+    fixed-address $spa_ip;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "${id}-spa";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+
+host ${id}-spb {
+    hardware ethernet $spb_mac;
+    fixed-address $spb_ip;
+    option routers 10.62.34.1;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.34.255;
+    option host-name "${id}-spb";
+    filename "pxelinux.0";
+    next-server 10.62.34.99;
+}
+}
+_EOF_
+
+fi
+if [[  "$id" =~ ^b  ]]; then
+    cat >> /root/work_pxe_test/dhcpd.conf <<- _EOF_
+subnet 10.62.54.0 netmask 255.255.255.0{
+host ${id}-spa {
+    hardware ethernet $spa_mac;
+    fixed-address $spa_ip;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "${id}-spa";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+
+host ${id}-spb {
+    hardware ethernet $spb_mac;
+    fixed-address $spb_ip;
+    option routers 10.62.54.249;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.62.54.255;
+    option host-name "${id}-spb";
+    filename "pxelinux.0";
+    next-server 10.62.54.249;
+}
+}
+_EOF_
+
+fi
+
+done < $data

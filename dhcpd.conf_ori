@@ -1,0 +1,15 @@
+ddns-update-style none;
+
+option domain-name "usd.lab.emc.com";
+option domain-name-servers 10.254.174.10;
+
+default-lease-time 600;
+max-lease-time 7200;
+
+log-facility local7;
+
+allow booting;
+allow bootp;
+
+
+

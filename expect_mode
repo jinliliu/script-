@@ -1,0 +1,33 @@
+#!/usr/bin/expect -f
+
+
+
+set ip [lindex $argv 0]
+
+ set password c4proto!
+ set timeout 5
+ spawn ssh root@$ip 
+ #expect "Password:"
+#send "c4proto!\r"
+expect {       
+        "*yes/no*" { send "yes\r" ; exp_continue }     
+        "*assword:" { send "c4proto!\r" ; exp_continue }       
+        "done" { exit }
+        }     
+
+
+expect "*#" 
+ send "state=`/sbin/get_boot_mode`\r" 
+send "echo \$state\r"
+send "exit\r"
+expect eof
+#spawn scp root@$ip:/root/mode_txt /root/work_pxe_test 
+
+#expect "Password:"
+#send "c4proto!\r"
+
+
+
+
+#expect eof
+

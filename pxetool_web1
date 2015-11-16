@@ -1,0 +1,183 @@
+#!/bin/bash
+
+#function dhcp_update {
+#cp -f /root/PXE/dhcpd.conf /etc/dhcpd.conf
+#return 
+#}
+
+
+echo "<br>--------------------------------WELCOME TO PXE UTILITY!------------------------------!"
+
+id=$1
+id="$(echo $id|sed "s/^[ \t]*//g"|sed "s/[ \t]*$//g"|tr "[:upper:]" "[:lower:]")"
+
+spa_ip=$2
+spb_ip=$3
+spa_mac=$4
+spb_mac=$5
+
+spa_bmc_ip=$8
+spb_bmc_ip=$9
+spa_mac="$(echo $spa_mac|tr "[:upper:]" "[:lower:]")"
+spb_mac="$(echo $spb_mac|tr "[:upper:]" "[:lower:]")"
+OSfile=$7
+
+cat <<- _EOF_
+VNXe device ID  is ${id} !
+${id}-spa's Ip  is ${spa_ip}!
+${id}-spb's Ip  is ${spb_ip}!
+${id}-spa's Mac is ${spa_mac}	!
+${id}-spb's Mac is ${spb_mac}!
+${id}-spa's bmc ip is ${spa_bmc_ip}!
+${id}-spb's bmc ip is ${spb_bmc_ip}!
+ the image is in ${OSfile}!
+_EOF_
+
+echo "<br>[LOG] DHCP configuration starts......!"
+#dhcp_update
+echo "<br>[LOG] DHCP configuration ends successfully!"
+
+service dhcpd restart
+
+spa_mac_trans="$(echo $spa_mac|sed "s/:/-/g")"
+spb_mac_trans="$(echo $spb_mac|sed "s/:/-/g")"
+[[ -e "01-${spa_mac_trans}" ]] && rm 01-${spa_mac_trans}
+[[ -e "01-${spb_mac_trans}" ]] && rm 01-${spb_mac_trans}
+
+pxeid=$1
+
+platformtype=$6
+platformtype="$(echo $platformtype|tr "[:lower:]" "[:upper:]")"
+case $platformtype in
+	OBERON)
+	platform=OBERON
+	mem=2048M	
+	;;
+	BEACHCOMBER|BEARCAT)
+	platform=BEACHCOMBER
+	mem=2048M
+	;;
+	*)
+	echo "<br>[ERROR] Wrong platform type!" && exit 1
+	;;
+esac
+
+echo "<br>[LOG] PXE boot configuration starts......!"
+
+cat <<- _EOF_
+
+<br>Platform type is $platform 
+<br>PXE mem       is $mem
+_EOF_
+
+cat > /srv/tftpboot/pxelinux.cfg/01-$spa_mac_trans << _EOF_
+serial 0 115200
+console 0
+default menu.c32
+menu title PXE SERVER
+prompt 1
+timeout 200
+label PXE
+    menu default
+    menu label $pxeid 
+    kernel linux/$pxeid/vmlinuz
+    append initrd=linux/$pxeid/initrd text splash=silent crashkernel=64M@32M showopts loglevel=1 panic=1 nopat pci=norom,hpmemsize=0M,hpiosize=0 ramdisk_size=61440 disable_panic_on_stuck_irq nopat console=ttyS0,115200 memmap=128M\$1024M neo.pramfs=128M\$1024M mem=$mem nmi_watchdog=1 mcdelay=1000 emc_nmi_panic=1 reboot=a iommu=soft neo.ignore_post_errors=1 maxcpus=6 neo.disablefw=1 platform=$platform neo.reinit=2 neo.path=http://10.62.34.99/pxe/$pxeid/OS.tgz.bin neo.invalidateir=1 
+_EOF_
+	
+
+cat > /srv/tftpboot/pxelinux.cfg/01-$spb_mac_trans << _EOF_
+serial 0 115200
+console 0
+default menu.c32
+menu title PXE SERVER
+prompt 1
+timeout 200
+label PXE
+    menu default
+    menu label $pxeid
+    kernel linux/$pxeid/vmlinuz
+    append initrd=linux/$pxeid/initrd text splash=silent crashkernel=64M@32M showopts loglevel=1 panic=1 nopat pci=norom,hpmemsize=0M,hpiosize=0 ramdisk_size=61440 disable_panic_on_stuck_irq nopat console=ttyS0,115200 memmap=128M\$1024M neo.pramfs=128M\$1024M mem=$mem nmi_watchdog=1 mcdelay=1000 emc_nmi_panic=1 reboot=a iommu=soft neo.ignore_post_errors=1 maxcpus=6 neo.disablefw=1 platform=$platform neo.reinit=2 neo.path=http://10.62.34.99/pxe/$pxeid/OS.tgz.bin neo.invalidateir=1 
+_EOF_
+
+echo "<br>[LOG] PXE boot configuration ends successfully!"
+
+cat <<- _EOF_
+<br>TFTP bootflash directory is /srv/tftpboot/linux/$pxeid
+<br>OS files directory is /srv/www/htdocs/$pxeid
+_EOF_
+
+OSfile=$7
+[ ! -e "$OSfile" ] && echo "<br>[ERROR] OS file doesn't exist!" && exit 1
+
+echo "<br>[LOG] OS files' build starts......"
+[ -d "/srv/www/htdocs/$pxeid" ] && rm -r "/srv/www/htdocs/$pxeid"
+mkdir -p "/srv/www/htdocs/$pxeid" && cd "/srv/www/htdocs/$pxeid"
+
+cp "$OSfile" "/srv/www/htdocs/$pxeid/OS.tgz.bin" && echo "<br>[LOG] Original OS image file has been copied."
+chmod 755 OS.tgz.bin
+./OS.tgz.bin --binblob > "OS.tgz.bin&binblob" && echo "<br>[LOG] OS binblob file has been built."
+#touch "OS.tgz.bin&config" && echo "<br>[LOG] OS config file has been built."
+
+cat >"OS.tgz.bin&config" << _EOF_
+#!/bin/bash -xe
+
+export HOSTNAME=$pxeid
+export IPADDR=0
+export NETMASK=
+export GATEWAY=
+export MTU=
+export NTP_SERVER=
+_EOF_
+
+chmod 755 "OS.tgz.bin&config"
+echo "<br>[LOG] OS config file has been built!"
+touch "OS.tgz.bin&customize" && echo "<br>[LOG] OS customize file has been built!"
+
+mv OS.tgz.bin "OS.tgz.bin&image" && echo "<br>[LOG] OS image file has been built!"
+echo "<br>[LOG] OS files' build ends successfully!"
+
+echo "<br>[LOG] TFTP bootflash files' bulid start......!"
+./"OS.tgz.bin&image" --unwrap | tar -xz -O ./flash/bootflash.img >bootflash.img && echo "<br>[LOG] bootflash.img has been unwarpped."
+mkdir -p flash_mnt && mount -o loop bootflash.img flash_mnt/
+
+[ -d "/srv/tftpboot/linux/$pxeid" ] && rm -r "/srv/tftpboot/linux/$pxeid"
+mkdir -p "/srv/tftpboot/linux/$pxeid" 
+
+cp flash_mnt/vmlinuz*.NEO flash_mnt/init* "/srv/tftpboot/linux/$pxeid/" && echo "<br>[LOG] bootflash files have been built."
+umount flash_mnt && rm -d flash_mnt 
+rm bootflash.img
+cd "/srv/tftpboot/linux/$pxeid"
+ln -s vmlinuz*.NEO vmlinuz
+ln -s init* initrd
+
+#service dhcpd restart
+echo "<br>[LOG] TFTP bootflash files' build ends successfully!"
+
+echo "<br>------------------------PXE SERVER CONFIGURATION DONE-------------------------!"
+echo "<br>Reboot dual...!"
+
+if [[ "$platformtype" =~ ^B ]]; then
+ipmitool -I lanplus -H $spa_bmc_ip -U admin -P password chassis bootdev pxe && echo "<br>[LOG] set spa boot from pxe!"
+
+ipmitool -I lanplus -H $spb_bmc_ip -U admin -P password chassis bootdev pxe && echo "<br>[LOG] set spb boot from pxe!"
+
+ipmitool -I lanplus -H $spa_bmc_ip -U admin -P password chassis power reset 
+
+ipmitool -I lanplus -H $spb_bmc_ip -U admin -P password chassis power reset 
+
+else
+ipmitool -I lanplus -H $spa_bmc_ip -U admin -P Password1 chassis bootdev pxe && echo "<br>[LOG] set spa boot from pxe!"
+
+ipmitool -I lanplus -H $spb_bmc_ip -U admin -P Password1 chassis bootdev pxe && echo "<br>[LOG] set spb boot from pxe!"
+
+ipmitool -I lanplus -H $spa_bmc_ip -U admin -P Password1 chassis power reset
+
+ipmitool -I lanplus -H $spb_bmc_ip -U admin -P Password1 chassis power reset
+
+fi
+
+echo "<br>----------------------------------------------------------------------------------! "
+echo "<br>PXE BOOT STARTED!"
+
+exit
+
